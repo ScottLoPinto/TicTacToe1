@@ -4,4 +4,4 @@ from .models import Toe
 class ToeSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Toe
-		fields = (['square'])
+		fields = (['square', 'score'])
