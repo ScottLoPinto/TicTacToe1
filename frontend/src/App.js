@@ -4,20 +4,6 @@ import axios from "axios";
 import Modal from "./components/Modal";
 
 function Square(props) {
-    /**axios.get("/api/toe/3/").then((response) => {
-        console.log(response.data.square);
-    });
-
-    axios.post("/api/toe/", {
-        square: "x",
-        move: "3"
-    }).then(response => { 
-	    console.log(response)
-    })
-    .catch(error => {
-        console.log(error.response)
-    });*/
-
   return (
     <button className="square" onClick={props.onClick}>
       {props.value}
@@ -58,23 +44,20 @@ class Board extends React.Component {
   }
 }
 
-
 class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
-      activeItem: {
-            square: "",
-            move: "",
-      },
       history: [
         {
           squares: Array(9).fill(null)
         }
       ],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      xScore: 0,
+      oScore: 0,
+      isWinner: false,
     };
   }
 
@@ -101,7 +84,8 @@ class Game extends React.Component {
   jumpTo(step) {
     this.setState({
       stepNumber: step,
-      xIsNext: (step % 2) === 0
+      xIsNext: (step % 2) === 0,
+      isWinner: false,
     });
   }
   
@@ -109,6 +93,7 @@ class Game extends React.Component {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
     const winner = calculateWinner(current.squares);
+   
 
     const moves = history.map((step, move) => {
       const desc = move ?
@@ -121,34 +106,43 @@ class Game extends React.Component {
       );
     });
 
+    setXData;
+    const setXData = async () => {
+        const response = await axios.get("/api/toe/1/");
+        this.setState({
+            xScore: response.data.score
+        });
+        
+    
+    }
+    console.log(this.state.xScore)
+
     let status;
-    if (winner) {
+    if (winner && this.state.isWinner === false) {
+      this.setState({
+        isWinner: true,
+      })
       status = "Winner: " + winner;
-      var scores;
-      if(winner === 'X'){
+      if(winner === 'X'){    
+        this.setState({
+          xScore: this.state.xScore+1
+        });
         axios
-            .get("/api/toe/1/")
-            .then((response) => {
-                scores = response.data.score + 1;
-                axios
-                    .put("/api/toe/1/", {
-                        square: "X",
-                        score: scores
-                    });
-            }
-        );
+            .put("/api/toe/1/", {
+                square: "X",
+                score: this.state.xScore+1,
+            })
       }if( winner === 'O'){
+        this.setState({
+          oScore: this.state.oScore+1
+        });
         axios
-            .get("/api/toe/2/")
-            .then((response) => {
-                scores = response.data.score + 1;
-                axios
-                    .put("/api/toe/2/", {
-                        square: "O",
-                        score: scores
-                    });
-            }
-         );
+            .put("/api/toe/2/", {
+                square: "O",
+                score: this.state.oScore+1,
+            })
+            
+        
       }
     }
     
@@ -172,8 +166,8 @@ class Game extends React.Component {
                 onClick={i => this.handleClick(i)}
               />
             </div>
-            <div> Score  </div>
-            <div className="scoreboard">X: O:  </div>
+            <div>Score</div>
+            <div className="scoreboard">X's: {this.state.xScore} | O's: {this.state.oScore}</div>
           </div>
           
           <div className="game-info">

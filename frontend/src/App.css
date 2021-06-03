@@ -18,7 +18,7 @@ li {
 
 button{
   background: #777;
-  border: green;
+  border: lightblue;
   margin: 20px;
   border-radius: 10px;
 }
@@ -46,7 +46,7 @@ button{
 }
 
 .scoreboard {
-	background: green;
+	background: lightblue;
 }
 .game {
   margin: 0;
