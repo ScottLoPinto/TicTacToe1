@@ -152,14 +152,19 @@ class Game extends React.Component {
       }
     }
     
+    else if(isDraw(current.squares)){
+        status = "Its a draw! No points awarded";
+    }
+    
     else{
-        status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+        status = "Current Move: " + (this.state.xIsNext ? "X" : "O");
     }
     
 
     return (
         <div>
           <div className="game">
+            
             <div className="game-board">
               <div>{status}</div>
               <Board
@@ -167,9 +172,11 @@ class Game extends React.Component {
                 onClick={i => this.handleClick(i)}
               />
             </div>
+            <div> Score  </div>
+            <div className="scoreboard">X: O:  </div>
           </div>
+          
           <div className="game-info">
-             
                 <ol>{moves}</ol>
             </div>
         </div>
@@ -179,6 +186,17 @@ class Game extends React.Component {
 
 
 
+function isDraw(squares){
+    if(calculateWinner(squares)){
+        return null;
+    }
+    for(let i =0; i< squares.length; i++) {
+        if(squares[i] === null){
+            return null;
+        }
+    }
+    return true;
+}
 
 function calculateWinner(squares) {
   const lines = [
